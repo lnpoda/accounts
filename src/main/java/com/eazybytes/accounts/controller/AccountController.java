@@ -1,21 +1,30 @@
 package com.eazybytes.accounts.controller;
 
+import com.eazybytes.accounts.dto.AccountContactInfoDto;
 import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.dto.ResponseDto;
 import com.eazybytes.accounts.service.IAccountService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@AllArgsConstructor
 @Validated
 public class AccountController {
 
     private IAccountService accountService;
+
+    @Autowired
+    private AccountContactInfoDto accountContactInfoDto;
+
+    public AccountController(IAccountService accountService) {
+        this.accountService = accountService;
+    }
+
 
     @GetMapping("/account")
     public ResponseEntity<CustomerDto> getAccount(@RequestParam String mobileNumber) {
@@ -47,5 +56,10 @@ public class AccountController {
         } else {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "cannot updated account"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/contact-info")
+    public ResponseEntity<AccountContactInfoDto> getContactInfo() {
+        return new ResponseEntity<>(accountContactInfoDto, HttpStatus.OK);
     }
 }

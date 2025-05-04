@@ -1,6 +1,7 @@
 package com.eazybytes.accounts.service;
 
 import com.eazybytes.accounts.dto.AccountDto;
+import com.eazybytes.accounts.dto.AccountsMsgDto;
 import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.entity.Account;
 import com.eazybytes.accounts.entity.Customer;
@@ -11,6 +12,9 @@ import com.eazybytes.accounts.mapper.CustomerMapper;
 import com.eazybytes.accounts.repository.AccountRepository;
 import com.eazybytes.accounts.repository.CustomerRepository;
 import lombok.AllArgsConstructor;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+//import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,6 +24,8 @@ import java.util.Random;
 @AllArgsConstructor
 public class AccountServiceImpl implements IAccountService{
 
+//    private final Logger log = LoggerFactory.getLogger(AccountServiceImpl.class);
+//    private final StreamBridge streamBridge;
     private CustomerRepository customerRepository;
     private AccountRepository accountRepository;
 
@@ -32,8 +38,9 @@ public class AccountServiceImpl implements IAccountService{
         Customer customer = CustomerMapper.mapToCustomer(customerDto, new Customer());
 
         Customer savedCustomer = customerRepository.save(customer);
-        accountRepository.save(createNewAccount(savedCustomer));
+        Account savedAccount = accountRepository.save(createNewAccount(savedCustomer));
 
+//        sendCommunication(savedAccount, savedCustomer);
     }
 
     @Override
@@ -98,4 +105,11 @@ public class AccountServiceImpl implements IAccountService{
 
         return newAccount;
     }
+
+//    private void sendCommunication(Account account, Customer customer) {
+//        AccountsMsgDto accountsMsgDto = new AccountsMsgDto(account.getAccountNumber(), customer.getName(),
+//                customer.getEmail(), customer.getMobileNumber());
+//        var result = streamBridge.send("send-communication-out-0: ", accountsMsgDto);
+//        log.info("Is communication request successfully processed?: {} ", result);
+//    }
 }
